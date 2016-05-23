@@ -1,0 +1,82 @@
+Here's the change log for the things that I change that are different from what I sent
+UMD on December 22, 2011. 
+
+Tues Dec 27 16:02:14 EST 2011
+
+1.) tcd2_defs.h: Added #define CLEAR 0x07
+2.) tcd2_defs.h: Added #define TCDMT PXR
+3.) tcd2_defs.h: Added #define CLEAR_LT 18
+4.) tcd2_defs.h: Added #define CLEAR_MT 19
+5.) tcd2_defs.h: Change #define MODE 20
+6.) tcd2_defs.h: Change #define CLEV 21
+7.) tcd2_defs.h: Change #define STKMSK 22
+8.) HTCD2.cpp::clear_event: Changed dummy[0] = (CLEAR << 4) | TCD_MT;
+                                    dummy[1] = (CLEAR_MT);
+                                    dummy[2] = 0;
+                                    dummy[3] = 0;
+9.) HTCD2.cpp::clear_event Removed dummy[0] = CLEAR_MT << 4;
+10.) HTCD2.cpp::flush_buffer Removed dummy[0] = CLEAR_MT << 4;
+11.) HTCD2.cpp::flush_buffer Changed dummy[0] = (FLUSH << 4) | ROSTACK;
+                                    dummy[1] = (CLEAR_MT);
+                                    dummy[2] = 0;
+                                    dummy[3] = 0;
+
+Thu Dec 29 15:57:37 EST 2011
+
+12.) tcd2_defs.h: Remove #define CLEAR_MT 0x06, as it clashes 
+     with #define CLEAR_MT 19
+13.) TCD2Cmd.cpp: Added   
+     else if( dcmd == CLEAR ) 
+     {	  
+       if( (retval = checkClr()) )
+	 return retval;
+     }
+
+14.) TCD2Cmd.cpp: Added checkClr function
+15.) TCD2Cmd.h: Added checkClr declaration
+16.) tcd2_err.h: Added #define TCD2CMD_CHECK_CLR_NODE_ERR 18
+17.) tcd2_err.h: Added #define TCD2CMD_CHECK_PARAM_ERR 19
+18.) TCD2Cmd.h: Added ddoresp as datamember
+19.) TCD2Cmd.cpp: Initialize ddoresp in constructor to 1
+20.) TCD2Cmd.cpp: Intialize ddoresp to 1 in TCD2Cmd_ProcessCommand
+21.) TCD2Cmd.cpp: Modify TCD2Cmd_ProcessCommand so that you only read the response
+                  when ddoresp is 1:
+      // Send the response
+      if( ddoresp )
+      {
+        if( (retval = dev->TCD2Usb_bulk_read_EP1IN(rawcmd,4)) )
+	  return retval;
+      }
+     else
+       return 0;
+23.) TCD2Cmd::checkClr: set ddoresp to 0 if we pass the checks
+24.) TCD2Cmd::TCD2Cmd_ProcessCommand: Add this:
+      else if( dcmd == FLUSH )
+        ddoresp = 0;
+25.) TCD2Usb.h: Added TCD2Usb_fx2lp_reset()
+26.) TCD2Usb.cpp: Added TCD2Usb::_TCD2Usb_fx2lp_reset()
+27.) tcd2_err.h: Added #define TCD2USB_OPEN_IHX_FILE_ERR 20
+28.) tcd2_err.h" Added #define TCD2USB_READ_IHX_FILE_ERR 21
+29.) tcd2_defs.h: change NUM_NODE_PARAMS to 20
+30.) tcd2_defs.h: change NPARAMS to 23
+31.) HTCD2: rewrote HTCD2::flush_buffer pretty extensively
+32.) tcd2_defs.h: add #define SOFTRESET 0x05
+33.) TCD2Cmd::TCD2Cmd_ProccessCommand: Added else if for SOFTRESET
+34.) HTCD2.h: Added tcd2_readout_gse(unsigned char * buf) for ground testing
+35.) HTCD2.cpp: Added the tcd2_readout_gse(unsigned char * buf) implementation
+36.) HTCD2.cpp: Added the reset function
+37.) HTCD2.h: Added tcd2_fx2lp_reset() function
+38.) HTCD2.cpp: Added tcd2_fx2lp_reset() function
+
+Sat Feb 11 14:06:19 EST 2012
+39.) tcd2_defs: Added #define INIT 0x03
+40.) TCD2Cmd.cpp::TCD2Cmd_ProcessCommand: Added this:
+     else if( dcmd == INIT )
+     ddoresp = 0;
+41.) gse/src/command_resolve: Added INIT to list of cmds, increased Ncmds to 8,
+     added 3 to cmdvals
+
+Fri Mar 16 11:39:46 EDT 2012
+42.) Remove the clear command after every read in event_gse.cpp and event_sfc.gse--that's being done in the FX2LP now
+43.) Note that any time you want to send the init command, you need to put yourself in command mode, then send INIT, then
+     wait for 1 second, the event mode again.

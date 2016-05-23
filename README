@@ -1,0 +1,26 @@
+Tyler Anderson Thu Dec 22 15:28:31 EST 2011
+README for the TCD2 CDAQ data routines
+
+The code in the directory was written for the CREAM7 TCD USB integration. 
+
+--------------------------------------------------------------------------------------
+Here is a summary of the classes:
+
+HTCD2: overall wrapper class for TCD operations. All TCD functionality is
+       encapsulated in this class. All methods are documented in HTCD2.h
+
+TCD2Usb: perform the TCD's USB operations
+
+TCD2Cmd: check and process commands and responses for the TCD
+
+TCD2Evt: read commands and write the responses
+
+--------------------------------------------------------------------------------------
+Standalone programs are in gse/
+
+---------------------------------------------------------------------------------------
+TODO
+--Add a warning message for event number slips
+--Replace calc_crc16 with the real calc_crc16 function
+--In the getconf function, fill out the rest of the tcf_data structs properly
+
