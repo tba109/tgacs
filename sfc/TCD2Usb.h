@@ -80,7 +80,7 @@ class TCD2Usb
   // Returns    0 good
   //           <0 error code
   /////////////////////////////////////////////////////////////////////////////
-  int TCD2Usb_fx2lp_reset(const char * path = "../../tcd_usb_development_Mar20_2012_private/development_firmware/tcd2_main.ihx", unsigned int vendor=0x04b4, unsigned int product=0x0098);
+  int TCD2Usb_fx2lp_reset(const char * path = "./tcd2_main.ihx", unsigned int vendor=0x04b4, unsigned int product=0x0098);
 
  private:
   /////////////////////////////////////////////////////////////////////////////
